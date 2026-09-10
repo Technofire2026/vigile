@@ -281,7 +281,7 @@
         <label><input type="checkbox" id="continuidade" checked> 🔗 Aproveitar o fim da escala do mês anterior (continuidade)</label>
         <a id="limparcont" onclick="limparContinuidade()" style="display:none">limpar histórico de continuidade</a>
         <span id="tipoBox" class="ctlgrp" style="display:inline-flex;align-items:center;gap:6px;border-left:1px solid var(--line);padding-left:12px"><span class="tiny lbl-nowrap" style="font-weight:600">Tipo de escala:</span><select id="tipo" onchange="setTipo()" style="font:inherit;padding:3px 6px;border:1px solid var(--line2);border-radius:6px"><option value="giro">Giro — supervisores (2 giros/dia)</option><option value="3giros">3 Giros — 3 turnos/dia</option><option value="24h">Plantão 24h — 1 militar/dia</option><option value="turno">Turno (dia ou noite) — 1 militar/dia</option></select></span><span id="turnoBox" class="ctlgrp" style="display:none;align-items:center;gap:6px;border-left:1px solid var(--line);padding-left:12px"><span class="tiny lbl-nowrap" style="font-weight:600">Turno:</span><select id="turnosel" onchange="setTurno()" style="font:inherit;padding:3px 6px;border:1px solid var(--line2);border-radius:6px"><option value="dia">Dia</option><option value="noite">Noite</option></select></span>
-        <span id="rotacaoBox" class="ctlgrp" style="display:inline-flex;align-items:center;gap:10px;border-left:1px solid var(--line);padding-left:12px;flex-wrap:wrap"><span class="tiny lbl-nowrap" style="font-weight:600">Rotação:</span><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="auto" onchange="setModo()"> Automático</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="fixa" onchange="setModo()"> Escala fixa</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="giro" onchange="setModo()"> Com giro</label><span class="tiny" style="cursor:help" title="Automático: usa Com giro quando o efetivo é múltiplo de 7 (que trava), e Fixa nos demais casos. Fixa: rodízio simples — cada militar recua um dia da semana a cada ciclo. Com giro: estende a folga de quem tira sábado+domingo para as posições girarem nos dias da semana.">ⓘ</span> <span id="modohint" class="tiny" style="color:#b45309;font-weight:600"></span></span>
+        <span id="rotacaoBox" class="ctlgrp" style="display:inline-flex;align-items:center;gap:10px;border-left:1px solid var(--line);padding-left:12px;flex-wrap:wrap"><span class="tiny lbl-nowrap" style="font-weight:600">Rotação:</span><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="auto" onchange="setModo()"> Automático</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="fixa" onchange="setModo()"> Escala fixa</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="giro" onchange="setModo()"> Com giro</label><span class="tiny" style="cursor:help" title="Automático: usa Com giro quando o efetivo é múltiplo de 7 (que trava), e Fixa nos demais casos. Fixa: rodízio simples — cada militar recua um dia da semana a cada ciclo. Com giro: estende a folga de quem tira sábado+domingo para as posições girarem nos dias da semana.">ⓘ</span> <span id="modohint" class="tiny" style="color:#b45309;font-weight:600"></span><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer;border-left:1px solid var(--line);padding-left:10px" title="Quem pega o 1º giro de sábado (e o 2º no domingo) recebe folga de ~2 ciclos, pulando o próximo fim de semana. Vale no modo Com giro."><input type="checkbox" id="satfolga" onchange="setSatFolga()"> Sábado: folga 2 ciclos</label></span>
       </div>
       <div id="erro"></div>
     </div>
@@ -433,14 +433,14 @@
     </div>
   </section>
 
-  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.3</span></span></footer>
+  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.4</span></span></footer>
 </main>
 
 <div id="aboutmodal" class="modal" style="display:none" onclick="if(event.target===this)closeAbout()">
   <div class="mbox">
     <button class="xbtn" onclick="closeAbout()">Fechar ✕</button>
     <h2>VIGILE</h2>
-    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.3 · 2026</p>
+    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.4 · 2026</p>
 
     <h3>Autoria e direitos autorais</h3>
     <p>© 2026 <b>Luís Cesar — Major do Corpo de Bombeiros Militar do Maranhão (CBMMA)</b>. Todos os direitos reservados. Aplicativo desenvolvido de forma independente pelo autor.</p>
@@ -484,6 +484,7 @@ const DIAS=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 const ABREV=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const FERIAS_DIAS=35;
 const EXT_SAT=2; // dias extras de folga p/ quem entra no sábado (Sát 1º + Dom 2º)
+function extSat(N){return (typeof state!=="undefined"&&state.config&&state.config.satFolga2c)?N:EXT_SAT;} // "2 ciclos" = folga ~= tamanho do efetivo
 const pad=n=>String(n).padStart(2,"0");
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
 const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -626,7 +627,7 @@ function reiniciarApp(){
   try{location.reload();}catch(e){try{location.href=location.pathname;}catch(_){}}
 }
 function logout(){if(state.user)log("Logout",state.user.login);state.user=null;state.editing=null;document.getElementById("app").style.display="none";document.getElementById("authgate").style.display="flex";renderAuthGate();}
-function showApp(){document.getElementById("authgate").style.display="none";document.getElementById("app").style.display="";var _cc=document.getElementById("configcard");if(_cc)_cc.style.display="none";renderUserbar();renderRoster();renderContControls();applyPerms();var _m=state.config.modo||"auto";var _r=document.querySelector('input[name="modo"][value="'+_m+'"]');if(_r)_r.checked=true;var _tp=document.getElementById("tipo");if(_tp)_tp.value=state.config.tipo||"giro";var _ts=document.getElementById("turnosel");if(_ts&&state.config.hor&&state.config.hor.turno)_ts.value=state.config.hor.turno.sel||"dia";setTipo();if(state.schedule){var _ms=document.getElementById("mes");if(_ms)_ms.value=state.schedule.month;var _an=document.getElementById("ano");if(_an)_an.value=state.schedule.year;renderSchedule();renderStats();}showTab(state.schedule?"escala":"efetivo");}
+function showApp(){document.getElementById("authgate").style.display="none";document.getElementById("app").style.display="";var _cc=document.getElementById("configcard");if(_cc)_cc.style.display="none";renderUserbar();renderRoster();renderContControls();applyPerms();var _m=state.config.modo||"auto";var _r=document.querySelector('input[name="modo"][value="'+_m+'"]');if(_r)_r.checked=true;var _sf=document.getElementById("satfolga");if(_sf)_sf.checked=!!state.config.satFolga2c;var _tp=document.getElementById("tipo");if(_tp)_tp.value=state.config.tipo||"giro";var _ts=document.getElementById("turnosel");if(_ts&&state.config.hor&&state.config.hor.turno)_ts.value=state.config.hor.turno.sel||"dia";setTipo();if(state.schedule){var _ms=document.getElementById("mes");if(_ms)_ms.value=state.schedule.month;var _an=document.getElementById("ano");if(_an)_an.value=state.schedule.year;renderSchedule();renderStats();}showTab(state.schedule?"escala":"efetivo");}
 function isOwner(){return !!(state.user&&state.user.role==="owner");}
 function isAdmin(){return !!(state.user&&(state.user.role==="admin"||state.user.role==="owner"));}
 function applyPerms(){var admin=isAdmin();var cc=document.getElementById("configcard");if(cc&&!admin)cc.style.display="none";var g=document.getElementById("btngerar");if(g)g.style.display=admin?"":"none";var c=document.getElementById("btncob");if(c)c.style.display=admin?"":"none";var cont=document.querySelector(".card .cont");if(cont)cont.style.display=admin?"":"none";var af=document.querySelector("#efetivo .addform");if(af)af.style.display=admin?"":"none";}
@@ -663,7 +664,7 @@ function exportLog(){
 }
 
 /* ===== CONFIGURAÇÕES / ASSINATURAS ===== */
-function loadConfig(){try{var c=localStorage.getItem("ciops:config");state.config=c?JSON.parse(c):{};}catch(e){state.config={};}if(!state.config.tipo)state.config.tipo="giro";if(!state.config.hor)state.config.hor={};var _H=state.config.hor;if(!_H.giro2)_H.giro2=[["07:00","19:00"],["19:00","07:00"]];if(!_H.giro3)_H.giro3=[["07:00","15:00"],["15:00","23:00"],["23:00","07:00"]];if(!_H.h24)_H.h24=[["08:00","08:00"]];if(!_H.turno)_H.turno={dia:["07:00","19:00"],noite:["19:00","07:00"],sel:"dia"};if(state.config.cabecalho===undefined)state.config.cabecalho="ESTADO DO MARANHÃO\nSECRETARIA DE ESTADO DA SEGURANÇA PÚBLICA\nCORPO DE BOMBEIROS MILITAR\nCENTRO INTEGRADO DE OPERAÇÕES DE SEGURANÇA PÚBLICA";}
+function loadConfig(){try{var c=localStorage.getItem("ciops:config");state.config=c?JSON.parse(c):{};}catch(e){state.config={};}if(!state.config.tipo)state.config.tipo="giro";if(state.config.satFolga2c===undefined)state.config.satFolga2c=false;if(!state.config.hor)state.config.hor={};var _H=state.config.hor;if(!_H.giro2)_H.giro2=[["07:00","19:00"],["19:00","07:00"]];if(!_H.giro3)_H.giro3=[["07:00","15:00"],["15:00","23:00"],["23:00","07:00"]];if(!_H.h24)_H.h24=[["08:00","08:00"]];if(!_H.turno)_H.turno={dia:["07:00","19:00"],noite:["19:00","07:00"],sel:"dia"};if(state.config.cabecalho===undefined)state.config.cabecalho="ESTADO DO MARANHÃO\nSECRETARIA DE ESTADO DA SEGURANÇA PÚBLICA\nCORPO DE BOMBEIROS MILITAR\nCENTRO INTEGRADO DE OPERAÇÕES DE SEGURANÇA PÚBLICA";}
 function saveConfig(){try{localStorage.setItem("ciops:config",JSON.stringify(state.config));}catch(e){}}
 var RANKS=[["coronel",13],["cel",13],["tenente-coronel",12],["ten cel",12]," ",["major",11],["maj",11],["capit",10],["cap",10],["1º ten",9],["1 ten",9],["2º ten",8],["2 ten",8],["aspir",7],["asp",7],["subten",6],["sub ten",6],["1º sgt",5],["1 sgt",5],["2º sgt",4],["2 sgt",4],["3º sgt",3],["3 sgt",3],["sargento",3],["sgt",3],["cabo",2],["cb",2],["soldado",1],["sd",1]].filter(function(x){return Array.isArray(x);});
 function rankWeight(posto){if(!posto)return 0;var p=" "+posto.toLowerCase().replace(/[\u00ba\u00aa]/g,"").replace(/[.\-]/g," ").replace(/\s+/g," ")+" ";var pats=[[/\b(ten(ente)? ?cel|tenente ?coronel|tc)\b/,12],[/\b(cel|coronel)\b/,13],[/\b(maj|major)\b/,11],[/\b(cap|capitao|capit\u00e3o)\b/,10],[/\b(1 ?ten|primeiro tenente)\b/,9],[/\b(2 ?ten|segundo tenente)\b/,8],[/\b(asp|aspirante)\b/,7],[/\b(sub ?ten|subtenente)\b/,6],[/\b(1 ?sgt)\b/,5],[/\b(2 ?sgt)\b/,4],[/\b(3 ?sgt|sgt|sargento)\b/,3],[/\b(cb|cabo)\b/,2],[/\b(sd|soldado)\b/,1]];for(var i=0;i<pats.length;i++){if(pats[i][0].test(p))return pats[i][1];}return 0;}
@@ -720,7 +721,7 @@ function reconstructRef(refY,refM,lastId){
   var per={};order.forEach(function(m){per[m.id]={_ld:0,_lsat:0,wkHist:[]};});
   for(var d2=1;d2<=N;d2++){var m=enterByDay[d2];if(!m)continue;per[m.id]._ld=d2;if(new Date(refY,refM,d2).getDay()===6)per[m.id]._lsat=d2;}
   var carry={per:{},lastEntererId:lastId};
-  order.forEach(function(m){var pp=per[m.id];var ld=pp._ld||0;var satLast=ld>0&&new Date(refY,refM,ld).getDay()===6;carry.per[m.id]={lastEnter:((satLast?ld+EXT_SAT:ld))-N,lastSatDay:(pp._lsat>0?pp._lsat-N:null),wkHist:pp.wkHist.slice(-4)};});
+  order.forEach(function(m){var pp=per[m.id];var ld=pp._ld||0;var satLast=ld>0&&new Date(refY,refM,ld).getDay()===6;carry.per[m.id]={lastEnter:((satLast?ld+extSat(N):ld))-N,lastSatDay:(pp._lsat>0?pp._lsat-N:null),wkHist:pp.wkHist.slice(-4)};});
   return {enterByDay:enterByDay,N:N,carry:carry};
 }
 function renderRefGrid(refY,refM){
@@ -772,7 +773,7 @@ function buildCarryFromEntradas(refY,refM,entradas){
   var lastId=null;
   for(var d=1;d<=N;d++){var id=entradas[d];if(id==null||id==="")continue;lastId=id;if(per[id]){per[id]._ld=d;if(new Date(refY,refM,d).getDay()===6)per[id]._lsat=d;}}
   var carry={per:{},lastEntererId:(lastId!=null?lastId:null)};
-  state.militares.forEach(function(m){var pp=per[m.id];var ld=pp._ld||0;var satLast=ld>0&&new Date(refY,refM,ld).getDay()===6;carry.per[m.id]={lastEnter:((satLast?ld+EXT_SAT:ld))-N,lastSatDay:(pp._lsat>0?pp._lsat-N:null),wkHist:pp.wkHist.slice(-4)};});
+  state.militares.forEach(function(m){var pp=per[m.id];var ld=pp._ld||0;var satLast=ld>0&&new Date(refY,refM,ld).getDay()===6;carry.per[m.id]={lastEnter:((satLast?ld+extSat(N):ld))-N,lastSatDay:(pp._lsat>0?pp._lsat-N:null),wkHist:pp.wkHist.slice(-4)};});
   return carry;
 }
 function salvarReferencia(){
@@ -960,7 +961,7 @@ function gerarEscala(militares,year,month,seed,modo,tipo){
       chosen=pool.sort((a,b)=>a.lastEnter-b.lastEnter||a.order-b.order)[0];
     }
     // folga estendida SOMENTE p/ quem entra no sábado (Sáb 1º + Dom 2º)
-    chosen.lastEnter=(modo==="giro"&&sat)?(D+EXT_SAT):D;
+    chosen.lastEnter=(modo==="giro"&&sat)?(D+extSat(N)):D;
     if(sat)chosen.lastSatDay=D;
     return chosen;
   }
@@ -1032,7 +1033,7 @@ function aplicarCoberturaCore(res,militares,year,month){
 
 /* Helpers de rotação reutilizáveis */
 function _mkSt(militares,seed){return militares.map(function(m,i){var sd=seed&&seed.per&&seed.per[m.id];return{ref:m,order:i,lastEnter:sd?(sd.lastEnter===null?-Infinity:sd.lastEnter):-Infinity,lastSatDay:(sd&&sd.lastSatDay!=null)?sd.lastSatDay:-Infinity,wkHist:sd?(sd.wkHist||[]).slice():[],selWknd:0};});}
-function _applyEnter(s,D,dateOf,modo){var sat=dateOf(D).getDay()===6;s.lastEnter=(modo==="giro"&&sat)?(D+EXT_SAT):D;if(sat)s.lastSatDay=D;}
+function _applyEnter(s,D,dateOf,modo,ext){var sat=dateOf(D).getDay()===6;s.lastEnter=(modo==="giro"&&sat)?(D+(ext||EXT_SAT)):D;if(sat)s.lastSatDay=D;}
 function _chooseFree(st,D,dateOf,modo){
   var date=dateOf(D),dn=dateOf(D+1);
   var avail=st.filter(function(s){return !isUnavailable(s.ref,date)&&!isUnavailable(s.ref,dn);});
@@ -1055,8 +1056,8 @@ function recalcularAfastamento(res0,militares,year,month,modo,tipo){
   if(startDay===null)return null;
   var st=_mkSt(militares,res0.seed);var byId=function(id){return st.find(function(s){return s.ref.id===id;});};var enter={};
   for(var D=0;D<=N;D++){
-    if(D<startDay&&res0.enter[D]){var sp=byId(res0.enter[D].id);if(sp){enter[D]=sp;_applyEnter(sp,D,dateOf,modo);continue;}}
-    var s=_chooseFree(st,D,dateOf,modo);enter[D]=s||null;if(s)_applyEnter(s,D,dateOf,modo);
+    if(D<startDay&&res0.enter[D]){var sp=byId(res0.enter[D].id);if(sp){enter[D]=sp;_applyEnter(sp,D,dateOf,modo,extSat(N));continue;}}
+    var s=_chooseFree(st,D,dateOf,modo);enter[D]=s||null;if(s)_applyEnter(s,D,dateOf,modo,extSat(N));
   }
   var _t=tipo||res0.tipo||"giro";
   if(res0.enter&&res0.enter[-1])enter[-1]=res0.enter[-1];
@@ -1132,6 +1133,7 @@ function _gerarCore(){
 }
 function limparContinuidade(){state.carry={};saveCarry();state.contInfo=null;renderContControls();if(state.schedule)renderSchedule();log("Continuidade limpa","");}
 function setModo(){var r=document.querySelector('input[name="modo"]:checked');if(r){state.config.modo=r.value;saveConfig();}updateModoHint();}
+function setSatFolga(){var c=document.getElementById("satfolga");state.config.satFolga2c=!!(c&&c.checked);saveConfig();}
 function setTipo(){var t=(document.getElementById("tipo")||{}).value||"giro";state.config.tipo=t;saveConfig();var box=document.getElementById("rotacaoBox");if(box)box.style.display=(t==="giro")?"inline-flex":"none";var tb=document.getElementById("turnoBox");if(tb)tb.style.display=(t==="turno")?"inline-flex":"none";updateModoHint();}
 function setTurno(){var v=(document.getElementById("turnosel")||{}).value||"dia";state.config.hor=state.config.hor||{};if(!state.config.hor.turno)state.config.hor.turno={dia:["07:00","19:00"],noite:["19:00","07:00"],sel:"dia"};state.config.hor.turno.sel=v;saveConfig();}
 function modoEfetivo(){var sel=(document.querySelector('input[name="modo"]:checked')||{}).value||state.config.modo||"auto";if(sel==="auto")return (state.militares.length>0&&state.militares.length%7===0)?"giro":"fixa";return sel;}
