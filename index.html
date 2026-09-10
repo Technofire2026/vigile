@@ -281,7 +281,7 @@
         <label><input type="checkbox" id="continuidade" checked> 🔗 Aproveitar o fim da escala do mês anterior (continuidade)</label>
         <a id="limparcont" onclick="limparContinuidade()" style="display:none">limpar histórico de continuidade</a>
         <span id="tipoBox" class="ctlgrp" style="display:inline-flex;align-items:center;gap:6px;border-left:1px solid var(--line);padding-left:12px"><span class="tiny lbl-nowrap" style="font-weight:600">Tipo de escala:</span><select id="tipo" onchange="setTipo()" style="font:inherit;padding:3px 6px;border:1px solid var(--line2);border-radius:6px"><option value="giro">Giro — supervisores (2 giros/dia)</option><option value="3giros">3 Giros — 3 turnos/dia</option><option value="24h">Plantão 24h — 1 militar/dia</option><option value="turno">Turno (dia ou noite) — 1 militar/dia</option></select></span><span id="turnoBox" class="ctlgrp" style="display:none;align-items:center;gap:6px;border-left:1px solid var(--line);padding-left:12px"><span class="tiny lbl-nowrap" style="font-weight:600">Turno:</span><select id="turnosel" onchange="setTurno()" style="font:inherit;padding:3px 6px;border:1px solid var(--line2);border-radius:6px"><option value="dia">Dia</option><option value="noite">Noite</option></select></span>
-        <span id="rotacaoBox" class="ctlgrp" style="display:inline-flex;align-items:center;gap:10px;border-left:1px solid var(--line);padding-left:12px;flex-wrap:wrap"><span class="tiny lbl-nowrap" style="font-weight:600">Rotação:</span><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="auto" onchange="setModo()"> Automático</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="fixa" onchange="setModo()"> Escala fixa</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="giro" onchange="setModo()"> Com giro</label><span class="tiny" style="cursor:help" title="Automático: usa Com giro quando o efetivo é múltiplo de 7 (que trava), e Fixa nos demais casos. Fixa: rodízio simples — cada militar recua um dia da semana a cada ciclo. Com giro: estende a folga de quem tira sábado+domingo para as posições girarem nos dias da semana.">ⓘ</span> <span id="modohint" class="tiny" style="color:#b45309;font-weight:600"></span><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer;border-left:1px solid var(--line);padding-left:10px" title="Quem pega o 1º giro de sábado (e o 2º no domingo) recebe folga de ~2 ciclos, pulando o próximo fim de semana. Vale no modo Com giro."><input type="checkbox" id="satfolga" onchange="setSatFolga()"> Sábado: folga 2 ciclos</label></span>
+        <span id="rotacaoBox" class="ctlgrp" style="display:inline-flex;align-items:center;gap:10px;border-left:1px solid var(--line);padding-left:12px;flex-wrap:wrap"><span class="tiny lbl-nowrap" style="font-weight:600">Rotação:</span><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="auto" onchange="setModo()"> Automático</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="fixa" onchange="setModo()"> Escala fixa</label><label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="radio" name="modo" value="giro" onchange="setModo()"> Com giro</label><span class="tiny" style="cursor:help" title="Automático: usa Com giro quando o efetivo é múltiplo de 7 (que trava), e Fixa nos demais casos. Fixa: rodízio simples — cada militar recua um dia da semana a cada ciclo. Com giro: estende a folga de quem tira sábado+domingo para as posições girarem nos dias da semana.">ⓘ</span> <span id="modohint" class="tiny" style="color:#b45309;font-weight:600"></span></span>
       </div>
       <div id="erro"></div>
     </div>
@@ -433,14 +433,14 @@
     </div>
   </section>
 
-  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.4</span></span></footer>
+  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.6</span></span></footer>
 </main>
 
 <div id="aboutmodal" class="modal" style="display:none" onclick="if(event.target===this)closeAbout()">
   <div class="mbox">
     <button class="xbtn" onclick="closeAbout()">Fechar ✕</button>
     <h2>VIGILE</h2>
-    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.4 · 2026</p>
+    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.6 · 2026</p>
 
     <h3>Autoria e direitos autorais</h3>
     <p>© 2026 <b>Luís Cesar — Major do Corpo de Bombeiros Militar do Maranhão (CBMMA)</b>. Todos os direitos reservados. Aplicativo desenvolvido de forma independente pelo autor.</p>
@@ -484,7 +484,7 @@ const DIAS=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 const ABREV=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const FERIAS_DIAS=35;
 const EXT_SAT=2; // dias extras de folga p/ quem entra no sábado (Sát 1º + Dom 2º)
-function extSat(N){return (typeof state!=="undefined"&&state.config&&state.config.satFolga2c)?N:EXT_SAT;} // "2 ciclos" = folga ~= tamanho do efetivo
+function extSat(N){return EXT_SAT;} // folga estendida do sábado = 2 dias (mantém o equilíbrio da escala)
 const pad=n=>String(n).padStart(2,"0");
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
 const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
