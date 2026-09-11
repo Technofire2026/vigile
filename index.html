@@ -433,14 +433,14 @@
     </div>
   </section>
 
-  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.8</span></span></footer>
+  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.9</span></span></footer>
 </main>
 
 <div id="aboutmodal" class="modal" style="display:none" onclick="if(event.target===this)closeAbout()">
   <div class="mbox">
     <button class="xbtn" onclick="closeAbout()">Fechar ✕</button>
     <h2>VIGILE</h2>
-    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.8 · 2026</p>
+    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.9 · 2026</p>
 
     <h3>Autoria e direitos autorais</h3>
     <p>© 2026 <b>Luís Cesar — Major do Corpo de Bombeiros Militar do Maranhão (CBMMA)</b>. Todos os direitos reservados. Aplicativo desenvolvido de forma independente pelo autor.</p>
@@ -955,8 +955,8 @@ function gerarEscala(militares,year,month,seed,modo,tipo){
       chosen=pool.sort((a,b)=>a.lastEnter-b.lastEnter||a.order-b.order)[0];
     }else if(we){
       // giro: no fim de semana (sáb OU dom) entra quem fez fim de semana há mais tempo, entre os bem descansados
-      let wpool=pool.filter(s=>!(s.lastSatDay>D-10));if(!wpool.length)wpool=pool;
-      chosen=wpool.sort((a,b)=>a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order)[0];
+      // fim de semana (sáb OU dom): entra quem fez fim de semana há mais tempo -> nunca repete se houver >=2 disponíveis
+      chosen=pool.sort((a,b)=>a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order)[0];
     }else{
       chosen=pool.sort((a,b)=>a.lastEnter-b.lastEnter||a.order-b.order)[0];
     }
@@ -1042,7 +1042,7 @@ function _chooseFree(st,D,dateOf,modo){
   if(!pool.length)return null;
   var sat=date.getDay()===6,we=(date.getDay()===0||date.getDay()===6);var ch;
   if(modo==="fixa"){ch=pool.sort(function(a,b){return a.lastEnter-b.lastEnter||a.order-b.order;})[0];}
-  else if(we){var wpool=pool.filter(function(s){return !(s.lastSatDay>D-10);});if(!wpool.length)wpool=pool;ch=wpool.sort(function(a,b){return a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order;})[0];
+  else if(we){ch=pool.sort(function(a,b){return a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order;})[0];
   }else ch=pool.sort(function(a,b){return a.lastEnter-b.lastEnter||a.order-b.order;})[0];
   return ch;
 }
