@@ -433,14 +433,14 @@
     </div>
   </section>
 
-  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.6</span></span></footer>
+  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.8</span></span></footer>
 </main>
 
 <div id="aboutmodal" class="modal" style="display:none" onclick="if(event.target===this)closeAbout()">
   <div class="mbox">
     <button class="xbtn" onclick="closeAbout()">Fechar ✕</button>
     <h2>VIGILE</h2>
-    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.6 · 2026</p>
+    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.8 · 2026</p>
 
     <h3>Autoria e direitos autorais</h3>
     <p>© 2026 <b>Luís Cesar — Major do Corpo de Bombeiros Militar do Maranhão (CBMMA)</b>. Todos os direitos reservados. Aplicativo desenvolvido de forma independente pelo autor.</p>
@@ -484,7 +484,7 @@ const DIAS=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 const ABREV=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const FERIAS_DIAS=35;
 const EXT_SAT=2; // dias extras de folga p/ quem entra no sábado (Sát 1º + Dom 2º)
-function extSat(N){return EXT_SAT;} // folga estendida do sábado = 2 dias (mantém o equilíbrio da escala)
+function extSat(N){return 0;} // sem folga extra: a rotação de fim de semana já evita repetição
 const pad=n=>String(n).padStart(2,"0");
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
 const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -719,7 +719,7 @@ function reconstructRef(refY,refM,lastId){
   var Nm=order.length,N=new Date(refY,refM+1,0).getDate(),enterByDay={};
   for(var d=N;d>=0;d--){var idx=(((K-(N-d))%Nm)+Nm)%Nm;enterByDay[d]=order[idx];}
   var per={};order.forEach(function(m){per[m.id]={_ld:0,_lsat:0,wkHist:[]};});
-  for(var d2=1;d2<=N;d2++){var m=enterByDay[d2];if(!m)continue;per[m.id]._ld=d2;if(new Date(refY,refM,d2).getDay()===6)per[m.id]._lsat=d2;}
+  for(var d2=1;d2<=N;d2++){var m=enterByDay[d2];if(!m)continue;per[m.id]._ld=d2;var _wd=new Date(refY,refM,d2).getDay();if(_wd===0||_wd===6)per[m.id]._lsat=d2;}
   var carry={per:{},lastEntererId:lastId};
   order.forEach(function(m){var pp=per[m.id];var ld=pp._ld||0;var satLast=ld>0&&new Date(refY,refM,ld).getDay()===6;carry.per[m.id]={lastEnter:((satLast?ld+extSat(N):ld))-N,lastSatDay:(pp._lsat>0?pp._lsat-N:null),wkHist:pp.wkHist.slice(-4)};});
   return {enterByDay:enterByDay,N:N,carry:carry};
@@ -771,7 +771,7 @@ function buildCarryFromEntradas(refY,refM,entradas){
   var N=new Date(refY,refM+1,0).getDate();
   var per={};state.militares.forEach(function(m){per[m.id]={_ld:0,_lsat:0,wkHist:[]};});
   var lastId=null;
-  for(var d=1;d<=N;d++){var id=entradas[d];if(id==null||id==="")continue;lastId=id;if(per[id]){per[id]._ld=d;if(new Date(refY,refM,d).getDay()===6)per[id]._lsat=d;}}
+  for(var d=1;d<=N;d++){var id=entradas[d];if(id==null||id==="")continue;lastId=id;if(per[id]){per[id]._ld=d;var _wd=new Date(refY,refM,d).getDay();if(_wd===0||_wd===6)per[id]._lsat=d;}}
   var carry={per:{},lastEntererId:(lastId!=null?lastId:null)};
   state.militares.forEach(function(m){var pp=per[m.id];var ld=pp._ld||0;var satLast=ld>0&&new Date(refY,refM,ld).getDay()===6;carry.per[m.id]={lastEnter:((satLast?ld+extSat(N):ld))-N,lastSatDay:(pp._lsat>0?pp._lsat-N:null),wkHist:pp.wkHist.slice(-4)};});
   return carry;
@@ -949,20 +949,20 @@ function gerarEscala(militares,year,month,seed,modo,tipo){
     let pool=[];for(const gap of[3,2]){pool=avail.filter(s=>D-s.lastEnter>=gap);if(pool.length)break;}
     if(!pool.length)pool=avail.filter(s=>D-s.lastEnter>=2);
     if(!pool.length)return null;
-    const sat=date.getDay()===6;
+    const sat=date.getDay()===6,we=(date.getDay()===0||date.getDay()===6);
     let chosen;
     if(modo==="fixa"){
       chosen=pool.sort((a,b)=>a.lastEnter-b.lastEnter||a.order-b.order)[0];
-    }else if(sat){
-      // giro: no sábado entra quem fez sábado há mais tempo, entre os bem descansados
-      let spool=avail.filter(s=>D-s.lastEnter>=6);if(!spool.length)spool=pool;
-      chosen=spool.sort((a,b)=>a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order)[0];
+    }else if(we){
+      // giro: no fim de semana (sáb OU dom) entra quem fez fim de semana há mais tempo, entre os bem descansados
+      let wpool=pool.filter(s=>!(s.lastSatDay>D-10));if(!wpool.length)wpool=pool;
+      chosen=wpool.sort((a,b)=>a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order)[0];
     }else{
       chosen=pool.sort((a,b)=>a.lastEnter-b.lastEnter||a.order-b.order)[0];
     }
-    // folga estendida SOMENTE p/ quem entra no sábado (Sáb 1º + Dom 2º)
+    // folga estendida p/ quem entra no sábado (Sáb 1º + Dom 2º); rotação de fds vale p/ qualquer efetivo
     chosen.lastEnter=(modo==="giro"&&sat)?(D+extSat(N)):D;
-    if(sat)chosen.lastSatDay=D;
+    if(we)chosen.lastSatDay=D;
     return chosen;
   }
   if(seed&&seed.lastEntererId!=null&&byId(seed.lastEntererId))enter[0]=byId(seed.lastEntererId);
@@ -1033,17 +1033,16 @@ function aplicarCoberturaCore(res,militares,year,month){
 
 /* Helpers de rotação reutilizáveis */
 function _mkSt(militares,seed){return militares.map(function(m,i){var sd=seed&&seed.per&&seed.per[m.id];return{ref:m,order:i,lastEnter:sd?(sd.lastEnter===null?-Infinity:sd.lastEnter):-Infinity,lastSatDay:(sd&&sd.lastSatDay!=null)?sd.lastSatDay:-Infinity,wkHist:sd?(sd.wkHist||[]).slice():[],selWknd:0};});}
-function _applyEnter(s,D,dateOf,modo,ext){var sat=dateOf(D).getDay()===6;s.lastEnter=(modo==="giro"&&sat)?(D+(ext||EXT_SAT)):D;if(sat)s.lastSatDay=D;}
+function _applyEnter(s,D,dateOf,modo,ext){var wd=dateOf(D).getDay(),sat=wd===6,we=(wd===0||wd===6);s.lastEnter=(modo==="giro"&&sat)?(D+(ext||EXT_SAT)):D;if(we)s.lastSatDay=D;}
 function _chooseFree(st,D,dateOf,modo){
   var date=dateOf(D),dn=dateOf(D+1);
   var avail=st.filter(function(s){return !isUnavailable(s.ref,date)&&!isUnavailable(s.ref,dn);});
   var pool=[];for(var gi=0;gi<2;gi++){var gap=[3,2][gi];pool=avail.filter(function(s){return D-s.lastEnter>=gap;});if(pool.length)break;}
   if(!pool.length)pool=avail.filter(function(s){return D-s.lastEnter>=2;});
   if(!pool.length)return null;
-  var sat=date.getDay()===6;var ch;
+  var sat=date.getDay()===6,we=(date.getDay()===0||date.getDay()===6);var ch;
   if(modo==="fixa"){ch=pool.sort(function(a,b){return a.lastEnter-b.lastEnter||a.order-b.order;})[0];}
-  else if(sat){var spool=avail.filter(function(s){return D-s.lastEnter>=6;});if(!spool.length)spool=pool;
-    ch=spool.sort(function(a,b){return a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order;})[0];
+  else if(we){var wpool=pool.filter(function(s){return !(s.lastSatDay>D-10);});if(!wpool.length)wpool=pool;ch=wpool.sort(function(a,b){return a.lastSatDay-b.lastSatDay||a.lastEnter-b.lastEnter||a.order-b.order;})[0];
   }else ch=pool.sort(function(a,b){return a.lastEnter-b.lastEnter||a.order-b.order;})[0];
   return ch;
 }
