@@ -114,6 +114,20 @@
   .esc td.shifted{box-shadow:inset 3px 0 0 #f59e0b;background:#fffbeb}
   .cobbadge{display:inline-block;font-size:10px;color:#fff;background:#0284c7;border-radius:4px;padding:0 5px;margin-left:6px;vertical-align:middle}
   .cobwas{display:block;font-size:11px;color:var(--mut2);text-decoration:line-through}
+  .esc-cards{display:none}
+  .dcard{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .dcard.fds{background:#fffbeb;border-color:#fde68a}
+  .dcard-h{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .dcard.fds .dcard-h{border-color:#fde68a}
+  .dcard-d{font-size:22px;font-weight:800;color:var(--graf);line-height:1}
+  .dcard-w{font-size:12px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .dcard-g{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:5px 0}
+  .dcard-g+.dcard-g{border-top:1px dashed var(--line)}
+  .dcard-lab{font-size:12px;color:var(--mut);font-weight:700;flex:0 0 auto}
+  .dcard-lab small{font-weight:500;color:var(--mut2)}
+  .dcard-v{text-align:right;font-weight:600}
+  .dcard-v.shifted{color:var(--cbm)}
+  @media(max-width:560px){ .esc-table{display:none} .esc-cards{display:block} }
   .esc td .ret{display:inline-block;margin-top:3px;font-size:10px;color:var(--ret-t);background:var(--ret);border-radius:4px;padding:1px 5px}
   .placeholder{padding:60px 20px;text-align:center;color:var(--mut)}
   .stat td,.stat th{padding:8px 10px;border-bottom:1px solid #f1f5f9}
@@ -433,14 +447,14 @@
     </div>
   </section>
 
-  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v1.9</span></span></footer>
+  <footer><span class="noprint">Ferramenta de apoio à confecção de escala. Revise antes de publicar em Boletim.<br>© 2026 <b>VIGILE</b> · Luís Cesar — Maj CBMMA · <span class="lnk" onclick="openAbout()">Sobre &amp; Política de Privacidade</span> · <span style="color:var(--mut2)">v2.0</span></span></footer>
 </main>
 
 <div id="aboutmodal" class="modal" style="display:none" onclick="if(event.target===this)closeAbout()">
   <div class="mbox">
     <button class="xbtn" onclick="closeAbout()">Fechar ✕</button>
     <h2>VIGILE</h2>
-    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 1.9 · 2026</p>
+    <p class="muted">Gestão de Escalas de Serviço — Corpos de Bombeiros Militares · Versão 2.0 · 2026</p>
 
     <h3>Autoria e direitos autorais</h3>
     <p>© 2026 <b>Luís Cesar — Major do Corpo de Bombeiros Militar do Maranhão (CBMMA)</b>. Todos os direitos reservados. Aplicativo desenvolvido de forma independente pelo autor.</p>
@@ -1226,7 +1240,7 @@ function renderSchedule(){
   state.militares.forEach(m=>feriasPeriods(m).forEach(p=>{if(p.ret.getFullYear()===year&&p.ret.getMonth()===month){(retDay[p.ret.getDate()]=retDay[p.ret.getDate()]||[]).push(m.nome);}}));
   state.militares.forEach(m=>atestadoPeriods(m).forEach(p=>{if(p.ret.getFullYear()===year&&p.ret.getMonth()===month){(retDay[p.ret.getDate()]=retDay[p.ret.getDate()]||[]).push(m.nome);}}));
   const _gm=[res.g1,res.g2,res.g3];
-  let h='<div class="tblwrap"><table class="esc"><thead><tr><th>Dia</th><th>Semana</th>'+_cols.map(function(c){return '<th>'+esc(c.lab)+(c.hhmm?' <small>'+esc(c.hhmm)+'</small>':'')+'</th>';}).join('')+'</tr></thead><tbody>';
+  let h='<div class="tblwrap esc-table"><table class="esc"><thead><tr><th>Dia</th><th>Semana</th>'+_cols.map(function(c){return '<th>'+esc(c.lab)+(c.hhmm?' <small>'+esc(c.hhmm)+'</small>':'')+'</th>';}).join('')+'</tr></thead><tbody>';
   for(let d=1;d<=res.N;d++){
     const date=new Date(year,month,d),wd=date.getDay(),we=isWknd(date);
     const cov=res.cover[d]||{},chg=(res.changed&&res.changed[d])||{};
@@ -1236,6 +1250,19 @@ function renderSchedule(){
     h+='<tr class="'+(we?'fds':'')+'"><td class="d">'+pad(d)+ret+'</td><td class="w">'+ABREV[wd]+'</td>'+cells+'</tr>';
   }
   h+='</tbody></table></div>';
+  // ---- cartões por dia (celular) ----
+  let hc='<div class="esc-cards">';
+  for(let d=1;d<=res.N;d++){
+    const date=new Date(year,month,d),wd=date.getDay(),we=isWknd(date);
+    const cov=res.cover[d]||{},chg=(res.changed&&res.changed[d])||{};
+    let gis='';
+    for(let ci=0;ci<_cols.length;ci++){const cc=giroCell(_gm[ci]?_gm[ci][d]:null,cov[ci+1]);const cls=cc.cls||(chg[ci+1]?'shifted':'');
+      gis+='<div class="dcard-g"><span class="dcard-lab">'+esc(_cols[ci].lab)+(_cols[ci].hhmm?' <small>'+esc(_cols[ci].hhmm)+'</small>':'')+'</span><span class="dcard-v '+cls+'">'+cc.html+'</span></div>';}
+    const ret=retDay[d]?'<div class="ret" style="margin:2px 0 6px">↩ retorno: '+esc(retDay[d].join(", "))+'</div>':'';
+    hc+='<div class="dcard'+(we?' fds':'')+'"><div class="dcard-h"><span class="dcard-d">'+pad(d)+'</span><span class="dcard-w">'+DIAS[wd]+'</span></div>'+ret+gis+'</div>';
+  }
+  hc+='</div>';
+  h+=hc;
   h+=signatureBlockHTML();
   document.getElementById("escala").innerHTML=h;
 }
